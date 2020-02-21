@@ -23,7 +23,10 @@ module Enumerable
     return true
   end
   def my_any
-    
+    for i in (0...self.length)
+      return true if yield(self[i])
+    end
+    return false
   end
   def my_none
   end
@@ -56,4 +59,8 @@ all = arr.my_all do |v|
   v > 10
 end
 puts all.to_s
-
+puts "my_any method output :"
+any = arr.my_any do |v|
+  v > 10
+end
+puts any.to_s
