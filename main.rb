@@ -16,21 +16,26 @@ module Enumerable
     end
     return temp
   end
-  def my_all
+  def my_all?
     for i in (0...self.length)
-      return false if !yield(self[i]) 
+      return false if !yield(self[i])
     end
     return true
   end
-  def my_any
+  def my_any?
     for i in (0...self.length)
       return true if yield(self[i])
     end
     return false
   end
-  def my_none
+  def my_none?
+    for i in (0...self.length)
+      return false if yield(self[i])
+    end
+    return true
   end
   def my_count
+
   end
   def my_map
   end
@@ -54,13 +59,18 @@ select_output = arr.my_select do |v|
   v > 2
 end
 puts select_output
-puts "my_all method output :"
-all = arr.my_all do |v|
+puts "my_all? method output :"
+all = arr.my_all? do |v|
   v > 10
 end
 puts all.to_s
-puts "my_any method output :"
-any = arr.my_any do |v|
-  v > 10
+puts "my_any? method output :"
+any = arr.my_any? do |v|
+  v > 4
 end
 puts any.to_s
+puts "my_none? method output :"
+none = arr.my_none? do |v|
+  v > 10
+end
+puts none.to_s
