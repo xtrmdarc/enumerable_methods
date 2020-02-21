@@ -1,13 +1,29 @@
-module Enumerator
+module Enumerable
   def my_each
+    for i in (0...self.length)
+      yield(self[i])
+    end
   end
   def my_each_with_index
+    for i in (0...self.length)
+      yield(self[i],i)
+    end
   end
   def my_select
+    temp = []
+    for i in (0...self.length)
+      temp.push(self[i]) if yield(self[i])
+    end
+    return temp
   end
   def my_all
+    for i in (0...self.length)
+      return false if !yield(self[i]) 
+    end
+    return true
   end
   def my_any
+    
   end
   def my_none
   end
@@ -20,3 +36,24 @@ module Enumerator
   def my_map
   end
 end
+
+arr = [5,2,3]
+puts "my_each method output :"
+arr.my_each do |num|
+  puts num.to_s
+end
+puts "my_each_with_index method output :"
+arr.my_each_with_index do |v,i|
+  puts "#{i} : #{v}"
+end
+puts "my_select method output :"
+select_output = arr.my_select do |v|
+  v > 2
+end
+puts select_output
+puts "my_all method output :"
+all = arr.my_all do |v|
+  v > 10
+end
+puts all.to_s
+
