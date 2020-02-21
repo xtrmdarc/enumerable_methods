@@ -34,8 +34,20 @@ module Enumerable
     end
     return true
   end
-  def my_count
-
+  def my_count(filter = nil)
+    return self.length if !filter
+    temp = []
+    count = 0
+    if block_given?
+      for i in (0...self.length)
+        count += 1 if yield(self[i])
+      end
+    else
+      for i in (0...self.length)
+        count += 1 if self[i] == filter
+      end
+    end
+    return count
   end
   def my_map
   end
@@ -74,3 +86,8 @@ none = arr.my_none? do |v|
   v > 10
 end
 puts none.to_s
+puts "my_count method output :"
+count = arr.count do |v|
+  v > 2
+end
+puts count.to_s
