@@ -50,10 +50,15 @@ module Enumerable
     return count
   end
   def my_map
+    return self if !block_given?
+    temp = []
+    for i in (0...self.length)
+      temp.push(yield(self[i]))
+    end
+    return temp
   end
   def my_inject
-  end
-  def my_map
+
   end
 end
 
@@ -63,31 +68,49 @@ arr.my_each do |num|
   puts num.to_s
 end
 puts "my_each_with_index method output :"
+
 arr.my_each_with_index do |v,i|
   puts "#{i} : #{v}"
 end
+
 puts "my_select method output :"
 select_output = arr.my_select do |v|
   v > 2
 end
 puts select_output
+
 puts "my_all? method output :"
 all = arr.my_all? do |v|
   v > 10
 end
 puts all.to_s
+
 puts "my_any? method output :"
 any = arr.my_any? do |v|
   v > 4
 end
 puts any.to_s
+
 puts "my_none? method output :"
 none = arr.my_none? do |v|
   v > 10
 end
 puts none.to_s
+
 puts "my_count method output :"
 count = arr.count do |v|
   v > 2
 end
 puts count.to_s
+
+puts "my_map method output :"
+map = arr.map do |v|
+  v * 3
+end
+puts map
+
+puts "my_inject method output :"
+inject = arr.inject do |v|
+  v * 3
+end
+puts inject
