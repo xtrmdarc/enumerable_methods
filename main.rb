@@ -22,7 +22,7 @@ module Enumerable
       temp.push(self[i]) if yield(self[i])
       i += 1
     end
-    return temp
+    temp
   end
   def my_all?
     i = 0
@@ -66,15 +66,22 @@ module Enumerable
     end
     return count
   end
-  def my_map
-    return self if !block_given?
+  def my_map (proc = nil)
+    return self unless (block_given? || proc)
     temp = []
     i = 0
-    while i < length
-      temp.push(yield(self[i]))
-      i += 1
+    if proc
+      while i < length
+        temp.push(proc.call(self[i]))
+        i += 1
+      end
+    else
+      while i < length
+        temp.push(yield(self[i]))
+        i += 1
+      end
     end
-    return temp
+    temp
   end
   def my_inject (initial = nil, sym  = nil)
     i = 1
@@ -105,62 +112,78 @@ module Enumerable
 
 end
 
-arr = [5,6,7,8,9,10]
-puts "my_each method output :"
+def multiply_els(arr)
+  arr.my_inject(:*)
+end
+
+my_map_proc = Proc.new do |el|
+  el * 3
+end
+
+arr = [2,4,5]
+puts 'my_each method output :'
 arr.my_each do |num|
   puts num.to_s
 end
-puts "my_each_with_index method output :"
+puts 'my_each_with_index method output :'
 
 arr.my_each_with_index do |v,i|
   puts "#{i} : #{v}"
 end
 
-puts "my_select method output :"
+puts 'my_select method output :'
 select_output = arr.my_select do |v|
   v > 2
 end
 puts select_output
 
-puts "my_all? method output :"
+puts 'my_all? method output :'
 all = arr.my_all? do |v|
   v > 10
 end
 puts all.to_s
 
-puts "my_any? method output :"
+puts 'my_any? method output :'
 any = arr.my_any? do |v|
   v > 4
 end
 puts any.to_s
 
-puts "my_none? method output :"
+puts 'my_none? method output :'
 none = arr.my_none? do |v|
   v > 10
 end
 puts none.to_s
 
-puts "my_count method output :"
+puts 'my_count method output :'
 count = arr.count do |v|
   v > 2
 end
 puts count.to_s
 
-puts "my_map method output :"
+puts 'my_map method output :'
 map = arr.my_map do |v|
   v * 3
 end
 puts map
 
-puts "my_inject method output :"
+puts 'my_inject method output :'
 inject = arr.my_inject do |memo, num|
   memo * num
 end
 
 puts inject
 
-puts "inject method output :"
+puts 'inject method output :'
 inject = arr.inject(:*)
 puts inject
+
+puts 'multiply_els method output :'
+inject = multiply_els([2,4,5])
+puts inject
+
+puts 'my_map method with proc output :'
+map = arr.my_map(my_map_proc)
+puts map
 
 # rubocop:enable Style/CaseEquality
