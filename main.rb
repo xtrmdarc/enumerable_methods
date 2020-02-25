@@ -1,5 +1,10 @@
+# rubocop:disable Metrics/ModuleLength
+# rubocop:disable Style/CaseEquality
+
 module Enumerable
   def my_each
+    return to_enum unless block_given?
+
     i = 0
     while i < length
       yield self[i]
@@ -8,6 +13,8 @@ module Enumerable
   end
 
   def my_each_with_index
+    return to_enum unless block_given?
+
     i = 0
     while i < length
       yield(self[i], i)
@@ -16,6 +23,8 @@ module Enumerable
   end
 
   def my_select
+    return to_enum unless block_given?
+
     temp = []
     i = 0
     while i < length
@@ -25,34 +34,65 @@ module Enumerable
     temp
   end
 
-  def my_all?
-    i = 0
-    while i < length
-      return false unless yield(self[i])
-
-      i += 1
+  def all_truthy?
+    my_each do |num|
+      return false unless num
     end
     true
   end
 
-  def my_any?
-    i = 0
-    while i < length
-      return true if yield(self[i])
+  def all_falsey?
+    my_each do |num|
+      return false if num
+    end
+    true
+  end
 
-      i += 1
+  def any_truthy?
+    my_each do |num|
+      return true if num
     end
     false
   end
 
-  def my_none?
+  def my_all?(pattern = nil)
     i = 0
     while i < length
-      return false if yield(self[i])
-
+      if block_given?
+        return false unless yield(self[i])
+      elsif pattern && !(pattern === self[i])
+        return false
+      end
       i += 1
     end
-    true
+    all_truthy?
+  end
+
+  def my_any?(pattern = nil)
+    i = 0
+    while i < length
+      if block_given?
+        return true if yield(self[i])
+      elsif pattern
+        return true if pattern === self[i]
+      end
+      i += 1
+    end
+    any_truthy?
+  end
+
+  def my_none?(pattern = nil)
+    i = 0
+    while i < length
+      if block_given?
+        return false if yield(self[i])
+      elsif pattern
+        return false if pattern === self[i]
+      end
+      i += 1
+
+    end
+    all_falsey?
   end
 
   def my_count(filter = nil)
@@ -66,13 +106,13 @@ module Enumerable
       elsif self[i] == filter
         count += 1
       end
-      i += 0
+      i += 1
     end
     count
   end
 
   def my_map(proc = nil)
-    return self unless block_given? || proc
+    return to_enum unless block_given? || proc
 
     temp = []
     i = 0
@@ -110,7 +150,8 @@ module Enumerable
     memo
   end
 end
-
+# rubocop:enable Metrics/ModuleLength
+# rubocop:enable Style/CaseEquality
 def multiply_els(arr)
   arr.my_inject(:*)
 end
